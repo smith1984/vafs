@@ -1,0 +1,48 @@
+1. Поднимаем docker-compose
+docker compose up -d
+
+2. Запускаем сервер backoffice ru.beeline.vafs.backoffice.Application
+
+3. Запускаем систему акторов ru.beeline.vafs.callcontrol.Application
+
+4. Подключаем консюмеры на топики call-in, rules
+
+5. отправляем события о звонках в топик kafka call-in
+docker exec --interactive --tty broker \
+kafka-console-producer --bootstrap-server broker:9092 \
+                       --topic call-in
+
+{"transactionId": 1, "numberA": 79991111111, "numberB": 79991112222, "initialCall": 1669121268} //Continue
+
+6. Подключаем консюмер на call-response и проверяем, что есть результат по звонку
+
+7. Проверяем каунтер по направлению в постгресе
+
+8. Добавляем правило
+curl -X POST localhost:8080/insert -H 'Content-Type: application/json' -d '{"priority":1,"lstA":[79991111111,79991111112],"oprA":"in","lstB":[79991112222,79991112223],"oprB":"in","oprCnt":">=","trgCnt":3,"valueIsTrue":"Release","oprAB":"and","oprABCnt":"and"}'
+
+9. Проверяем что правило легло в постгрес
+
+10. Отправляем события о звонке 3 раза
+{"transactionId": 2, "numberA": 79991111111, "numberB": 79991112222, "initialCall": 1669121278} //Continue
+{"transactionId": 3, "numberA": 79991111111, "numberB": 79991112222, "initialCall": 1669121288} //Release
+{"transactionId": 4, "numberA": 79991111111, "numberB": 79991112222, "initialCall": 1669121298} //Release
+
+11. Достаем правило
+curl localhost:8080/rule/5e69ce6c-ce09-4bab-ac9e-87d60979c8e8
+
+12. Обновляем правило
+curl -X PUT localhost:8080/update/5e69ce6c-ce09-4bab-ac9e-87d60979c8e8 -H 'Content-Type: application/json' -d '{"priority":1,"lstA":[79991111111,79991111112],"oprA":"in","lstB":[79991112222,79991112223],"oprB":"in","oprCnt":">=","trgCnt":7,"valueIsTrue":"Release","oprAB":"and","oprABCnt":"and"}'
+
+13. Отправляем события о звонке 4 раза
+{"transactionId": 5, "numberA": 79991111111, "numberB": 79991112222, "initialCall": 1669121298} //Continue
+{"transactionId": 6, "numberA": 79991111111, "numberB": 79991112222, "initialCall": 1669121298} //Continue
+{"transactionId": 7, "numberA": 79991111111, "numberB": 79991112222, "initialCall": 1669121268} //Release
+{"transactionId": 8, "numberA": 79991111111, "numberB": 79991112222, "initialCall": 1669121278} //Release
+
+14. Удаляем правило
+curl -X DELETE localhost:8080/delete/5e69ce6c-ce09-4bab-ac9e-87d60979c8e8
+
+15. Отправляем события о звонке 2 раза
+{"transactionId": 9, "numberA": 79991111111, "numberB": 79991112222, "initialCall": 1669121288} //Continue
+{"transactionId": 10, "numberA": 79991111111, "numberB": 79991112222, "initialCall": 1669121298} //Continue
