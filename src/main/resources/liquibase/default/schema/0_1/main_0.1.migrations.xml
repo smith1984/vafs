@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="create Rule table" author="mppetrov">
+        <createTable tableName="Rule">
+            <column name="id" type="text">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="priority" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lstAId" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="oprA" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lstBId" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="oprB" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="oprCnt" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trgCnt" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="valueIsTrue" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="oprAB" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="oprABCnt" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create ListNumber table" author="mppetrov">
+        <createTable tableName="ListNumber">
+            <column name="id" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="number" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
